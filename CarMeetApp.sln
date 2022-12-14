@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarMeetApp.Api", "CarMeetApp.Api\CarMeetApp.Api.csproj", "{0AD02CA8-8803-4378-97C7-4B5690D1358E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarMeetApp.Domain", "CarMeetApp.Domain\CarMeetApp.Domain.csproj", "{F5C9D260-5653-4E00-9AA0-D8B3181C4162}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarMeetApp.Dal", "CarMeetApp.Dal\CarMeetApp.Dal.csproj", "{70840760-8207-42EC-95FC-12295E9EE6BF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0AD02CA8-8803-4378-97C7-4B5690D1358E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AD02CA8-8803-4378-97C7-4B5690D1358E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AD02CA8-8803-4378-97C7-4B5690D1358E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AD02CA8-8803-4378-97C7-4B5690D1358E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5C9D260-5653-4E00-9AA0-D8B3181C4162}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5C9D260-5653-4E00-9AA0-D8B3181C4162}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5C9D260-5653-4E00-9AA0-D8B3181C4162}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5C9D260-5653-4E00-9AA0-D8B3181C4162}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70840760-8207-42EC-95FC-12295E9EE6BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70840760-8207-42EC-95FC-12295E9EE6BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70840760-8207-42EC-95FC-12295E9EE6BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70840760-8207-42EC-95FC-12295E9EE6BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
