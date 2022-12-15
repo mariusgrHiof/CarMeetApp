@@ -10,6 +10,7 @@ namespace CarMeetApp.Api.AutoMapper
         {
             CreateMap<Car, CarReadDto>();
             CreateMap<CarCreateDto, Car>();
+            CreateMap<CarUpdateDto, Car>();
         }
     }
 }
