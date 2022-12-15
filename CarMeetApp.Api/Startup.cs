@@ -1,4 +1,6 @@
 using CarMeetApp.Dal;
+using CarMeetApp.Dal.Repositories;
+using CarMeetApp.Domain.Abstractions.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +35,9 @@ namespace CarMeetApp.Api
             
             // Automapper
             services.AddAutoMapper(typeof(Startup));
+            
+            // User Repository
+            services.AddScoped<IUsersRepositories, UserRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

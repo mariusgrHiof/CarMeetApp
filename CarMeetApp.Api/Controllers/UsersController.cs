@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CarMeetApp.Api.Dtos;
 using CarMeetApp.Dal;
+using CarMeetApp.Domain.Abstractions.Repositories;
 using CarMeetApp.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,20 +16,20 @@ namespace CarMeetApp.Api.Controllers
     [Route("api/[controller]")]
     public class UsersController : Controller
     {
-        private readonly DataContext _ctx;
         private readonly IMapper _mapper;
+        private readonly IUsersRepositories _userRepo;
 
 
-        public UsersController(DataContext ctx, IMapper mapper)
+        public UsersController(DataContext ctx, IMapper mapper, IUsersRepositories userRepo)
         {
-            _ctx = ctx;
             _mapper = mapper;
+            _userRepo = userRepo;
         }
         
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
-            var users = await _ctx.Users.Include(u => u.Cars).ToListAsync();
+            var users = await _userRepo.GetAllUsersAsync();
 
             var mappedUsers = _mapper.Map<List<UserReadDto>>(users);
             return Ok(mappedUsers);
@@ -37,7 +38,7 @@ namespace CarMeetApp.Api.Controllers
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetUserById(int userId)
         {
-            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+            var user = await _userRepo.GetUserByIdAsync(userId);
 
             if (user == null) return NotFound();
 
@@ -50,8 +51,8 @@ namespace CarMeetApp.Api.Controllers
         public async Task<IActionResult> CreateUser([FromBody] UserCreateDto newUser)
         {
             var domainUser = _mapper.Map<User>(newUser);
-            _ctx.Users.Add(domainUser);
-            await _ctx.SaveChangesAsync();
+
+            await _userRepo.CreateUserAsync(domainUser);
 
             var mappedUser = _mapper.Map<UserReadDto>(domainUser);
 
@@ -65,10 +66,9 @@ namespace CarMeetApp.Api.Controllers
        
 
             var mappedUser = _mapper.Map<User>(updateUser);
-            mappedUser.UserId = userId; 
-            
-            _ctx.Users.Update(mappedUser);
-            await _ctx.SaveChangesAsync();
+            mappedUser.UserId = userId;
+
+            await _userRepo.UpdateUserAsync(mappedUser,userId);
 
             return NoContent();
         }
@@ -78,12 +78,8 @@ namespace CarMeetApp.Api.Controllers
         [HttpDelete("userId")]
         public async Task<IActionResult> DeleteUser(int userId)
         {
-            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.UserId == userId);
-
-            if (user == null) return NotFound();
-
-            _ctx.Users.Remove(user);
-            await _ctx.SaveChangesAsync();
+            var userToDelete = _userRepo.DeleteUserByIdAsync(userId);
+            if (userToDelete == null) return NotFound();
 
             return NoContent();
         }
@@ -91,7 +87,7 @@ namespace CarMeetApp.Api.Controllers
         [HttpGet("{userId}/cars")]
         public async Task<IActionResult> GetAllUserCars(int userId)
         {
-            var cars = await _ctx.Cars.Where(c => c.UserId == userId).ToListAsync();
+            var cars = await _userRepo.GetAllUserCarsAsync(userId);
 
             var mappedCars = _mapper.Map<List<CarReadDto>>(cars);
 
@@ -101,10 +97,8 @@ namespace CarMeetApp.Api.Controllers
         [HttpGet("{userId}/cars/{carId}")]
         public async Task<IActionResult> GetUserCarById(int userId, int carId)
         {
-            var user = await _ctx.Users.Include(u => u.Cars).FirstOrDefaultAsync(u => u.UserId == userId);
-            if (user == null) return NotFound();
+            var car = await _userRepo.GetUserCarByIdAsync(userId, carId);
 
-            var car = user.Cars.FirstOrDefault(c => c.CarId == carId);
             if (car == null) return NotFound();
 
             var mappedCar = _mapper.Map<CarReadDto>(car);
@@ -118,16 +112,27 @@ namespace CarMeetApp.Api.Controllers
         public async Task<IActionResult> CreateCar([FromBody] CarCreateDto newCar, int userId)
         {
             var mappedCar = _mapper.Map<Car>(newCar);
-            
-            var user = await _ctx.Users.Include(u => u.Cars).FirstOrDefaultAsync(u => u.UserId == userId);
-            if (user == null) return NotFound();
-            
-            user.Cars.Add(mappedCar);
-            await _ctx.SaveChangesAsync();
+
+            var car = await _userRepo.CreateUserCar(userId, mappedCar);
+            if (car == null) return NotFound();
 
             var carReadDto = _mapper.Map<CarReadDto>(mappedCar);
             
             return CreatedAtAction(nameof(GetUserCarById), new {UserId = userId, CarId = carReadDto.CarId}, carReadDto);
         }
+
+        [HttpPut("{userId}/cars/{carId}")]
+        public async Task<IActionResult> UpdateUserCar([FromBody] CarUpdateDto updatedCar, int userId, int carId)
+        {
+            var mappedCar = _mapper.Map<Car>(updatedCar);
+            mappedCar.CarId = carId;
+            mappedCar.UserId = userId;
+
+            var car = await _userRepo.UpdateUserCar(userId, mappedCar);
+            if (car == null) return NotFound();
+
+            return NoContent();
+        }
+        
     }
 }
